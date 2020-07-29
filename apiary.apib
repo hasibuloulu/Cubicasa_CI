@@ -1,0 +1,957 @@
+FORMAT: 1A
+HOST: https://qa-customers.cubi.casa/api
+
+# demo_API_hasibul
+
+As a trainee in CUBICASA, I am want to know how I can perform the POSTMAN HTTP 
+responses and request in the Apiary. I will try understand the requests and responses 
+of the company, users and order respectively. 
+The first step for creating a blueprint is to specify the API Name and metadata.The 
+blueprint starts with a metadata section. In this case we have specified that FORMAT 
+has the value of 1A. The format keyword denotes the version of the API Blueprint. This
+step looks as first two line code.
+
+# CubiCasa Integrate API
+
+CubiCasa Integrate API is meant to integrate your production workflow with CubiCasa. 
+It allows you to continue the use of the familiar CubiCasa mobile app and integrate 
+your own order management system to CubiCasa. For further customization, Exporter API 
+enables individual styles for every floor plan and Quick Edit eases the job of your 
+own help desk. The diagram below represents how the orders flow through the CubiCasa
+platform.
+
+![Integrate API Flow](https://cubicasa-wordpress-uploads.s3.amazonaws.com/uploads/2020/02/integrate-API-flow-1.png)
+
+## Something doesn't work?
+Please contact developers@cubicasa.com and describe your issue, this API is work in 
+progress so unfinished or undocumented features may still exist.
+
+# How to get started
+
+Start your development against the <b>staging environment</b> and move to production when
+your system is ready for production.
+
+## Create an API key
+
+### Staging environment
+
+> <b>API base url:</b> https://qa-customers.cubi.casa/api
+
+In order to use the staging version of the API, you'll need a staging API key. 
+[Create a staging account](https://qa-customers.cubi.casa/user/signup) and then visit
+ your [company page](https://qa-customers.cubi.casa/company) 
+to create an API key from the UI. By default, this API documentation refers
+to the staging version of the API.
+
+<b>Use a fake credit card for your company account:</b>
+
+Credit card number: 4242 4242 4242 4242
+
+Expiry: 1/2025
+
+CVC: 123
+
+### iOS and Android app access for staging environment
+In case you need to access CubiCasa mobile app (iOS or Android) in staging 
+environment (most likely you'll need), please contact developers@cubicasa.com 
+and share your Apple ID email or Google Play Store email with us and we'll add you
+to Apple's Testflight or Google's testing program.
+
+
+### Production environment
+
+> <b>API base url:</b> https://app.cubi.casa/api
+
+In order to use the production version of the API, you'll need a production API key. 
+Visit your [company page](https://app.cubi.casa/company) 
+to create an API key from the UI.
+
+Similarly to the staging environment, you can create an account, but you'll need 
+to use a real credit card or some other form of payment prearranged with our Sales
+team, to access the service. By default, this API documentation refers to the
+staging version of the API.
+
+### iOS and Android app access for production environment
+For production, you can just download the apps from the App Store or 
+Google Play Store. You'll need to leave the Android testing program 
+before you can download the production version. For iOS the App Store
+download replaces the TestFlight installation.
+
+## Usage
+This API follows REST best practices with one small exception: User resource
+is requested with the user email instead of user ID. All other resources use IDs
+for identification.
+
+## Error messages
+The API follows standard HTTP response status codes. Most common error 
+scenarios are returned with a descriptive status code and message that 
+explains the error.
+
+## Other CubiCasa APIs
+Spice up your integration by using 
+[Exporter API](https://www.cubi.casa/developers/cubicasa-exporter-api/) 
+to render floor plan images with custom styles or use 
+[Quick Edit](https://www.cubi.casa/developers/cubicasa-quick-edit-api/) 
+to enable floor plan editing in web browser.
+
+## Company resource [/company]
+
+### Get company resource [GET]
+
+Request company details.
+
++ Request
+
+    + Headers
+    
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+
++ Response 200
+
+    + Headers
+
+            content-type:application/json
+
+    + Body
+
+            {
+                "result": {
+                    "country": "FI", 
+                    "external_id_required": true,
+                    "name": "ABC Testing Oy", 
+                    "package": "pay-as-you-go-president", 
+                    "public_id": "105b90b3-2b94-4b6b-baa2-def700afcb87", 
+                    "subscription_status": "Active", 
+                    "vat_id": "", 
+                    "webhook_urls":  "https://domain.com/webhook-3"
+                }
+            }
+            
+### Update company resource (webhooks) [PATCH]
+Update delivery webhooks. Old webhooks are replaced with the new ones.
+
+When an order is delivered, the webhook will send a **POST** to your webhook 
+URL and contain the following data about the order:
+>{  
+>    "id": "ef0b0282-90b3-4c04-b417-adc357dae6f5",  
+>    "model_id": "72f7a7b5-6df3-4777-9544-46d5c97a986b",
+>    "previous_status": "Pending"     
+>  
+>}
+
+You can use the previous status define the type of update the order received:
+- Pending: First delivery
+- Fixing: Fix request was delivered
+- Ready: Quick Edit was used to make a change
+
+*Note: We'll try to call your webhook for 3 times and then give up.*
+
+
+
++ Request
+
+    + Headers
+    
+            content-type:application/json
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+        
+    + Body
+
+            {
+                "webhook_urls": [
+                    "https://domain.com/webhook-3",
+                    "https://domain.com/webhook-4"
+                ]
+            }
+
++ Response 200
+
+    + Headers
+
+            content-type:application/json
+
+    + Body
+
+            {
+                "webhook_urls": [
+                    "https://domain.com/webhook-3",
+                    "https://domain.com/webhook-4"
+                ]
+            }
+
+## Company package resource [/company/package]
+### Get company package [GET]
++ Request
+    + Headers
+    
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+
++ Response 200
+
+    + Headers
+
+            content-type:application/json
+
+    + Body
+
+            {
+                "billing_type": "credit-card", 
+                "floor_color": true, 
+                "jpg": true, 
+                "name": "pay-as-you-go-president", 
+                "png": true, 
+                "property_report": true, 
+                "quick_edit": true, 
+                "scan_feature": true, 
+                "svg": true
+            }
+            
+## Merge another company [/company/request-merge]
+### Send a merge request to another company [POST]
+The email for merge request needs to be a manager level user.
+
++ Request
+    + Headers
+    
+            content-type:application/json
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+        
+    + Body
+
+            {
+                "company_email": "hasibul.islam@cubicasa.com"
+            }
+
++ Response 200
+
+    + Headers
+    
+            content-type:application/json
+
+    + Body
+
+            {
+                "msg": "Company merge request has been sent"
+            }
+            
+## Delete a webhook [/company/webhook]
+### Delete company webhook [DELETE]
+
++ Request
+    + Headers
+    
+            content-type:application/json
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+        
+    + Body
+
+            {
+                "webhook_urls" : ["https://domain.com/webhook-3"]
+            }
+
++ Response 200
+
+    + Headers
+    
+            content-type:application/json
+
+    + Body
+
+            {
+                "msg": "Finish delete company webhook!",
+                "webhook_urls": [
+                    null
+                ]
+            }
+            
+
+# Group Office
+
+## Office collection [/company/office]
+
+### List all offices [GET]
+
+List all offices and users
+
++ Request
+
+    + Headers
+    
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+            
+
++ Response 200
+
+    + Headers
+
+            content-type:application/json
+
+    + Body
+    
+            [
+                {
+                    "id": "74ff51ae-99f5-4e57-89f6-8453824b33a4",
+                    "name": "Helsinki",
+                    "users": [
+                        {
+                            "email": "tim@internet.com",
+                            "id": "f8fddc89-5035-4827-aea9-475cf37a94e9",
+                            "role": "Manager"
+                        },
+                        {
+                            "email": "eric@search.com",
+                            "id": "aa202dda-a9d3-49b3-97b8-7f7070e0711d",
+                            "role": "Manager"
+                        }
+                    ]
+                },
+                {
+                    "id": "343c4cdd-77dd-4ff3-9f1b-8b3b75ed3c35",
+                    "name": "Jinou Testing Oy",
+                    "users": [
+                        {
+                            "email": "jinou.sun+local@cubicasa.com",
+                            "id": "4eaa48cd-224c-4296-98da-22a64da17674",
+                            "role": "User"
+                        },
+                        {
+                            "email": "hasibul.islam@cubicasa.com",
+                            "id": "4eaa48cd-224c-4296-98da-22a64da17674",
+                            "role": "User"
+                        }
+                    ]
+                }
+            ]
+            
+### Add new office [POST]
+
+Request company details.
+
++ Request
+    + Headers
+    
+            content-type:application/json
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+        
+    + Body
+
+            {
+                "name" : "Oulu"
+            }
+
++ Response 200
+
+    + Headers
+    
+            content-type:application/json
+
+    + Body
+
+            {
+                "msg": "New office Oulu added!",
+                "office_id": "9928e772-1e96-4f62-837c-a77ab6e7c5f0"
+            }
+
+# Group Users
+
+## User collection [/user]
+
+### List all users [GET]
+
+List all users in the company account.
+
++ Request
+
+    + Headers
+    
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+
++ Response 200
+
+    + Headers
+    
+            content-type:application/json
+
+    + Body
+
+            [
+                {
+                    "email": "jinou.sun+local@cubicasa.com", 
+                    "email_confirmed": true, 
+                    "id": "f0eb2959-3056-4ff6-9511-fca3cc5754a6", 
+                    "name": "Jinou",
+                    "surname": "Sun",
+                    "role": "Manager"
+                }, 
+                {
+                    "email": "hasibul.islam@cubicasa.com",
+                    "email_confirmed": true,
+                    "id": "20ea98fc-c218-40be-a7be-7a157fb4570e",
+                    "name": "Muhammad Hasibul",
+                    "role": "User",
+                    "surname": "Islam"
+                 },
+                 {
+                    "email": "jinou.sun@hotmail.com",
+                    "email_confirmed": true,
+                    "id": "942e05f6-32e3-464f-9aa4-ce70b60b9018",
+                    "name": "Aier",
+                    "role": "user",
+                    "surname": "Sun"
+                 }
+            ]
+            
+### Add new user to collection [POST]
+
+Add a new user to your company account. An invitation email is sent to 
+the new user that must be completed before using the service.
+
++ Attributes
+    
+    + email: e.g. eric@search.com (required)
+    + role: User or Manager (required)
+    + office_id: Office uuid (string)
+    
++ Request
+    + Headers
+    
+            content-type:application/json
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+        
+    + Body
+
+            {
+                "email": "hasibul00@gmail.com",
+                "role":"User",
+                "office_id": "53599fcc-7207-47b9-bc7c-99af66486811"
+            }
+
++ Response 200
+
+    + Headers
+    
+            content-type:application/json
+
+    + Body
+
+            {
+                "email":"hasibul00@gmail.com",
+                "id":"53599fcc-7207-47b9-bc7c-99af66486811",
+                "msg":"Invitation email was sent to user email and needs to be finished before first login.",
+                "role":"User"
+            }
+            
+## User resource [/user/{email}]
+Parameters `email` is required. 
+
+### Get user by email [GET]
+Get details of a user of your company.
+
+
++ Parameters
+
+    + email: hasibul.islam@cubicasa.com (string) - An unique email address.
+
+
++ Request
+
+    + Headers
+    
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+           
++ Response 200
+
+    + Headers
+    
+            content-type:application/json
+
+    + Body
+
+            {
+                 "email": "hasibul.islam@cubicasa.com", 
+                 "email_confirmed": true, 
+                 "id": "035ba747-5d49-4cb4-bc60-93408546d5cf", 
+                 "name": "Muhammad Hasibul",
+                 "surname": "Islam",
+                 "office_id": "20ea98fc-c218-40be-a7be-7a157fb4570e", 
+                 "office_name": "CubiCasaMHI", 
+                 "role": "User"
+            }
+
+### Edit user resource [PATCH]
+Update details of a user of your company.
+
++ Request
+
+    + Headers
+    
+            content-type:application/json
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+        
+    + Body
+
+            {
+                "new_email": "hasibul.islam@cubicasa.com",
+                "role": "Manager",
+                "name": "Hasibul",
+                "surname": "Islam"
+            }
+
++ Response 200
+
+    + Headers
+    
+            content-type:application/json
+
+    + Body
+
+            {
+                "email": "hasibul.islam@cubicasa.com", 
+                "name": "Hasibul", 
+                "role": "User", 
+                "surname": "Islam"
+            }
+
+
+## Change user password [/user/change-password]
+
+### Change user password [POST]
+Change user password through API.
+
++ Request (application/json)
+
+    + Headers
+    
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+            
+    + Body
+
+            {
+                "email": "jinou.sun@hotmail.com",
+                "old_password": "testing1",
+                "new_password": "testing1"
+            }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "msg": "Your password has been changed."
+            }
+            
+## Send password reset link [/user/reset-password]
+
+### Send password reset link [POST]
+Trigger sending password reset link to user email.
+
++ Request
+
+    + Headers
+    
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+            content-type:application/json
+
+    + Body
+
+            {
+                "email": "hasibul.islam@cubicasa.com"
+            }
+
++ Response 200
+
+    + Headers
+    
+            content-type:application/json
+
+    + Body
+
+            {
+                "msg": "Send reset password email successfully."
+            }
+            
+## Delete user resource [/user/{user_id}]
+
+### Delete user with user ID [DELETE]
+
++ Parameters
+
+    + user_id: `942e05f6-32e3-464f-9aa4-ce70b60b9018`
+    
++ Request
+
+    + Headers
+    
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+            content-type:application/json
+            
++ Response 200
+
+    + Headers
+    
+            content-type:application/json
+
+    + Body
+
+            {
+                "msg": "User likerose+test2@gmail.com was deleted successfully"
+            }
+            
+# Group Orders
+
+## Orders collection [/order{?created_before,user_id,status,latitude,longitude,distance,office_id}]
+
+### List orders [GET]
+List last 30 orders. Paginate results by using the optional
+`created_before` parameter. You can use the `iso_created` value from
+the last order of your list to request the next 30 orders.
+
+`status` can take multiple values by defining the paramater multiple 
+times, e.g. `/order?status=Pending&status=Ready`
+
+
++ Parameters
+
+    + created_before (optional) - Date in ISO 8601 format (UTC), available with each order
+    + user_id (optional) - UUID of user
+    + status (optional) - Status of order: Draft, Pending, Ready, Fixing
+    + longitude (optional) - Geocoordinate e.g. 123.123456
+    + latitude (optional) - Geocoordinate e.g. 12.123456
+    + distance (optional) - Search distance in meters, a bounding box
+
++ Request (application/json)
+    
+    + Headers
+            
+            api-key: 448f7331-d89a-4a78-b52b-9d77357b70a3
+
++ Response 200 (application/json)
+
+    + Body
+    
+            [
+                {
+                    "order": {
+                        "address": {
+                            "city": "Oulu",
+                            "country": "Finland",
+                            "lat": 65.0121,
+                            "lng": 25.4651,
+                            "number": "1",
+                            "state": "Oulu",
+                            "street": "Yliopistokatu 8C",
+                            "suite": "C219",
+                            "postalCode": "90570"
+                        },
+                        "info": {
+                            "created": "Tue, 30 Jun 2020 19:59:44 GMT",
+                            "iso_created": "2020-06-30T19:59:44.805057",
+                            "jpg_urls": null,
+                            "model_id": null,
+                            "public_id": "db0ae3ea-e018-40ff-b725-ceb635b2851b",
+                            "status": "Pending"
+                        }
+                    }
+                },
+                {
+                    "order": {
+                        "address": {
+                            "city": "Oxford",
+                            "country": "United Kingdom",
+                            "lat": 51.752266,
+                            "lng": -1.257275,
+                            "number": "2",
+                            "state": "",
+                            "street": "High St.",
+                            "suite": "A1",
+                            "postalCode": "OX1"
+                        },
+                        "info": {
+                            "created": "Tue, 30 Jun 2020 19:27:56 GMT",
+                            "iso_created": "2020-06-30T19:27:56.413825",
+                            "jpg_urls": null,
+                            "model_id": "c9d3ed24-08c3-4e08-95c9-48ad87eb4924",
+                            "public_id": "db0ae3ea-e018-40ff-b725-ceb635b2851b",
+                            "status": "Ready"
+                        }
+                    }
+                }
+            ]
+
+## Create a redraw order [/order]
+
+### Create an order [POST]
+
+Required parameters: `street`, `number`, `city`, `country`, `source`, `order_type`
+
+`source` needs to be a list of links to publicly available image files (JPG, PNG, PDF supported) or Showcase link(s).
+`order_type` can have values Tier1 or Tier2-redraw.
+
+| Order type | source | Explanation |
+|-------|----------------------|----|
+| Tier1 | List of public PNG, JPG, PDF files | Redraw order from original blue print. |
+| Tier2-redraw | Link to Showcase. Measurement tool enabled if dimensions are required in CubiCasa floor plan. | Redraw order from e.g. Matterport Showcase or some other 360 provider. Confirm from CubiCasa customer service if your 360/showcase provider is supported. |
+
++ Request
+
+    + Headers
+    
+            content-type:application/json
+            api-key: 448f7331-d89a-4a78-b52b-9d77357b70a3
+      
+    + Attributes
+    
+        + street  - street name (required)
+        + number - street number (required)
+        + source - list of public urls (required)
+        + order_type - Tier1 or Tier2-redraw (required)
+        + country - country (required)
+        + city - city (required)
+        + suite - suite if apartment
+        + state - state
+        + postalCode -  postal code
+        + info - if additional info for order
+        + latitude - Geocoordinate e.g. 12.123456
+        + longitude - Geocoordinate e.g. 12.123456
+        + owner_email - Who should be the owner of this order (will be the account Manager if not specified)
+      
+      
+    + Body
+
+            {
+                "street": "Yliopistokatu 8A",
+                "number": "8",
+                "suite": "A211",
+                "city": "Oulu",
+                "state": "Oulu",
+                "country": "Finland",
+                "postalCode": "90570",
+                "info": "Initial testing Order",
+                "latitude": 65.0121,
+                "longitude": 25.4651,
+                "source": ["https://previews.123rf.com/images/vecton/vecton1709/vecton170900091/85320818-top-view-of-floor-plan-interior-design-layout-for-house-with-furniture-and-fixture-.jpg"],
+                "order_type": "Tier1",
+                "owner_email": "hasibul.islam@cubicasa.com"
+            }
+
++ Response 200
+
+    + Headers
+    
+            content-type:application/json
+
+    + Body
+
+            {
+                "id": "2227eef9-4754-4280-8423-e95938ff3e9c ",
+                "msg": "Order delivered succesfully!"
+            }
+            
+
++ Response 400
+Information is missing, please verify that all required fields are present
+
+    + Headers
+    
+            content-type:application/json
+
+    + Body
+
+            {
+                "msg": "We could not process your order. Please try again."
+            }
+
+## Draft orders [/order/draft]
+
+### Create a draft order [POST]
+Add a draft order for a user. The **latitude and longitude** (floats) will be used
+for fetching the nearest orders in the mobile app.
+
++ Request (application/json)
+
+    + Headers
+    
+            api-key: 448f7331-d89a-4a78-b52b-9d77357b70a3
+
+    + Body
+
+            {
+                "street": "Bourbon St",
+                "number": "631",
+                "suite": "A1",
+                "city": "New Orleans",
+                "state": "Louisiana",
+                "country": "United States",
+                "postalCode": "70130",
+                "lat": "29.958365",
+                "lng": "-90.066198",
+                "latitude": 29.958365,
+                "longitude": -90.066198,
+                "external_id": "1234567",
+                "owner_email": "jinou.sun@hotmail.com"
+            }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "address": {
+                    "city": "New Orleans",
+                    "country": "United States",
+                    "lat": "29.958365",
+                    "lng": "-90.066198",
+                    "number": "631",
+                    "postalCode": "70130",
+                    "state": "Louisiana",
+                    "street": "Bourbon St",
+                    "suite": "A1"
+                    },
+                    "external_id": "1234567",
+                    "id": "6ca29e3f-5a81-45a5-a885-c24dba79f6d0",
+                    "iso_created": "2020-07-06T06:16:43.834785",
+                    "latitude": 29.958365,
+                    "longitude": -90.066198,
+                    "owner_email": "jinou.sun@hotmail.com",
+                    "status": "Draft"
+            }
+            
+
+## Draft orders resource [/order/draft/{id}]
+
+### Delete a draft order [DELETE]
+
++ Parameters
+
+    + id:`7d7e5fa8-c458-42cd-9d0b-3184090896f5`
+
++ Request (application/json)
+
+    + Headers
+    
+            api-key: 448f7331-d89a-4a78-b52b-9d77357b70a3
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "id": "9a939afa-f38b-408e-9835-c071575e4df2",
+                "status": "Deleted"
+            }
+            
+## Order resource [/order/{id}]
+
+### Get order by ID [GET]
+Get order details with order ID
+
++ Parameters
+
+    + id:`700dc585-9935-494e-b38b-79067434794a`
+
++ Request (application/json)
+
+    + Headers
+    
+            api-key: 448f7331-d89a-4a78-b52b-9d77357b70a3
+  
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "result": {
+                    "add_info": "Additional information about this order",
+                    "address": {
+                        "city": "Oulu",
+                        "country": "Finland",
+                        "lat": "",
+                        "lng": "",
+                        "number": "10",
+                        "postalCode": "90510",
+                        "state": "Oulu",
+                        "street": "Mesaanitie",
+                        "suite": "A21"
+                    },
+                    "created": "Wed, 03 Jun 2020 13:29:17 GMT",
+                    "external_id": null,
+                    "first_delivery": null,
+                    "home_report": "/orders/pdf/property-report/700dc585-9935-494e-b38b-79067434794a",
+                    "iso_created": "2020-06-03T13:29:17.159968",
+                    "jpg_urls": null,
+                    "jpg_urls_dim": null,
+                    "latitude": 65.0121,
+                    "longitude": 25.4651,
+                    "model_id": null,
+                    "png_urls": null,
+                    "png_urls_dim": null,
+                    "public_id": "700dc585-9935-494e-b38b-79067434794a",
+                    "status": "Pending",
+                    "svg_urls": null,
+                    "svg_urls_dim": null,
+                    "user_email": "jinou.sun+user1@hotmail.com",
+                    "user_id": "44b901b3-59f1-41d6-89d6-5bf15e981e14"
+                  }
+            }
+            
+            
+## Additional order assets [/order/{id}/download?type=combined-pdf]
+Original link is [/order/{id}/download?type=combined-pdf&dimensions=true]
+I checked the link to get the pdf file, in real life, with [/order/download/{id}/pdf]
+
+### Get additional order assets [GET]
+Currently supports only downloading multipage PDF through the API.
+
++ Parameters
+
+    + id: `e2654f85-5fe8-4585-a696-8784859658e3`
+
++ Attributes
+    
+    + type: `combined-pdf` (required)
+    + dimensions: true or false (required)
+
++ Request
+
+    + Headers
+    
+            api-key: 448f7331-d89a-4a78-b52b-9d77357b70a3
+
++ Response 200
+
+    + Headers
+    
+            Content-Disposition: attachment
+
+
+## Fix requests collection [/order/{order_id}/fix-request]
+
++ Parameters
+
+    + order_id: `e2654f85-5fe8-4585-a696-8784859658e3`
+
+### Add a fix request to collection [POST]
+    
++ Request
+
+    + Headers
+    
+            api-key:448f7331-d89a-4a78-b52b-9d77357b70a3
+        
+    + Body
+
+            {
+                "text": "Fix request text: dimentions are missing. Just for testing.",
+                "img_urls": [
+                    "https://d3ls91xgksobn.cloudfront.net/5120x,q90/etuovimedia/images/property/import/534/1327534/0e76b9541118d347871c0e0e51d244c4/9e472a3a71e48a54a9357c1b6c72e1ef/ORIGINAL.jpeg"
+                ]
+            }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "id": "f022e068-77f9-489b-9b63-d2ed1599e18e",
+                "msg": "Fix request created successfully!"
+            }
